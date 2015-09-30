@@ -29,7 +29,8 @@ class ManagerService
      * @todo Factor this into an interface
      * @return \Doctrine\ORM\EntityManager
      */
-    public function getEntityManager() {
+    public function getEntityManager()
+    {
         return $this->entityManager;
     }
 
@@ -77,7 +78,7 @@ class ManagerService
 
         return array (
             'token' => $oathToken,
-            'secret' => $newSecret
+            'secret' => $newSecret,
         );
     }
 }

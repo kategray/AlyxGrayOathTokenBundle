@@ -28,6 +28,9 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->container = $kernel->getContainer();
     }
 
+    /**
+     * Does the dependency injection extension automatically define the service in the container?
+     */
     public function testServiceIsDefinedInContainer()
     {
         $service = $this->container->get('alyx_gray.oath_token.manager');
@@ -35,6 +38,9 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('AlyxGray\OathTokenBundle\Security\Token\ManagerService', $service, 'Improper class used for oath token manager service.');
     }
 
+    /**
+     * Test the setEntityManager function to make sure it will properly set and clear the entity
+     */
     public function testSetEntityManager()
     {
         $service = $this->container->get('alyx_gray.oath_token.manager');
@@ -42,7 +48,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         // Minimal doctrine setup
         $connectionOptions = array(
             'driver' => 'pdo_sqlite',
-            'path' => 'database.sqlite'
+            'path' => 'database.sqlite',
         );
 
         // Set up a new Doctrine configuration
@@ -62,7 +68,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
         // Ensure null is handled correctly
         $service->setEntityManager(null);
-        $this->assertNull($service->getEntityManager(), 'Failed to clear entity manager.');;
+        $this->assertNull($service->getEntityManager(), 'Failed to clear entity manager.');
 
     }
 }
