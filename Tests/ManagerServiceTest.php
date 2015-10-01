@@ -16,7 +16,7 @@ use Doctrine\ORM\Configuration;
 /**
  * Tests whether or not the token manager service properly loads
  */
-class ServiceTest extends \PHPUnit_Framework_TestCase
+class ManagerServiceTest extends \PHPUnit_Framework_TestCase
 {
     private $container;
 

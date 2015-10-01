@@ -10,15 +10,16 @@
 
 namespace AlyxGray\OathTokenBundle\Entity;
 
-use AlyxGray\OathTokenBundle\OathToken;
+use AlyxGray\OathTokenBundle\Model\OathToken;
 use Doctrine\ORM\Mapping as ORM;
+use AlyxGray\OathTokenBundle\Model\LocalOathTokenInterface;
 
 /**
  * Doctrine storage of an OATH token
  * @ORM\Entity
  * @ORM\Table(name="ag_token")
  */
-class DoctrineToken extends OathToken
+class DoctrineToken extends OathToken implements LocalOathTokenInterface
 {
     /**
      * Token counter

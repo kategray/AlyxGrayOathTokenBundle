@@ -10,10 +10,12 @@
 
 namespace AlyxGray\OathTokenBundle\DependencyInjection;
 
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This extension is responsible for loading the service configuration automatically
@@ -29,7 +31,34 @@ class AlyxGrayOathTokenExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        // Parse the configuration
+        $processor = new Processor();
+        $configuration = new Configuration();
+        $config = $processor->processConfiguration($configuration, $configs);
+
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+
+        // Load the driver-specific configuration
+        if ('custom' !== $config['driver']) {
+            $loader->load(sprintf('%s.xml', $config['driver']));
+        }
+    }
+
+    /**
+     * Provides the path for XSD validation
+     * @see \Symfony\Component\DependencyInjection\Extension\Extension::getXsdValidationBasePath()
+     */
+    public function getXsdValidationBasePath()
+    {
+        return __DIR__.'/../Resources/config/';
+    }
+
+    /*
+     * Provides the namespace for XSD validation
+     * @see \Symfony\Component\DependencyInjection\Extension\Extension::getNamespace()
+     */
+    public function getNamespace()
+    {
+        return 'https://github.com/alyxgray/AlyxGrayOathTokenBundle/schema/';
     }
 }

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AlyxGray\OathTokenBundle;
+namespace AlyxGray\OathTokenBundle\Model;
 
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
@@ -209,7 +209,7 @@ class OathToken
     {
         // Ensure that the shared secret meets complexity requirements
         $minLength = $ignoreRecommendedLength ? OathToken::SECRET_MINIMUM_BITS / 8 : OathToken::SECRET_RECOMMENDED_BITS / 8;
-        if (strlen($sharedSecret) < $minLength) {
+        if ($sharedSecret && strlen($sharedSecret) < $minLength) {
             throw new \InvalidArgumentException(sprintf('Secret provided contains %d bits, minimum permitted is %d.', strlen($sharedSecret) * 8, $minLength * 8), self::ERROR_INSUFFICIENT_SECRET_SIZE);
         }
 

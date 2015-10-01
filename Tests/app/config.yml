@@ -1,2 +1,6 @@
 framework:
     secret: "To err is human, to moo bovine."
+
+alyx_gray_oath_token:
+    driver:      sqlite
+    driver_type: local
