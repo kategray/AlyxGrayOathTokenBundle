@@ -10,8 +10,6 @@
 
 namespace AlyxGray\OathTokenBundle\Tests;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Configuration;
 use AlyxGray\OathTokenBundle\Model\OathToken;
 use AlyxGray\OathTokenBundle\Model\LocalOathToken;
 

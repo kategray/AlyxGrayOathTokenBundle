@@ -40,7 +40,7 @@ class ManagerService
      */
     public function setEntityManager($entityManager = null)
     {
-        if ($entityManager != null) {
+        if ($entityManager !== null) {
             if ($entityManager instanceof EntityManager) {
                 $this->entityManager = $entityManager;
             } else {

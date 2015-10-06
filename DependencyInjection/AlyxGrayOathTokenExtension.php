@@ -41,6 +41,8 @@ class AlyxGrayOathTokenExtension extends Extension
         // Load the driver-specific configuration
         if ('custom' !== $config['driver']) {
             $loader->load(sprintf('%s.xml', $config['driver']));
+        } else {
+            throw new InvalidConfigurationException ('Custom drivers are not currently supported.');
         }
     }
 

@@ -162,7 +162,7 @@ class OathToken
      */
     public function __construct($sharedSecret = null, $mode = self::TOKEN_MODE_EVENT, $counter = 0)
     {
-        $this->setSecret($sharedSecret)->setMode($mode);
+        $this->setSecret($sharedSecret)->setMode($mode)->setCounter($counter);
     }
 
     /**
