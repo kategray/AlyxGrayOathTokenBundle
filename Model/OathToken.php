@@ -301,7 +301,7 @@ class OathToken
      */
     public static function calculateHMAC($key, $value)
     {
-        return hash_hmac('sha1', $value, $key);
+        return hash_hmac('sha1', $value, $key, true);
     }
 
     /**
@@ -331,6 +331,7 @@ class OathToken
 
         // Extracts 4 bytes from the HOTP starting at the offset
         $dynamicBinaryCode = unpack('N', substr($hmac, $offset, 4));
+        $dynamicBinaryCode = $dynamicBinaryCode[1];
 
         // Truncates to 31 bits
         $dynamicBinaryCode = $dynamicBinaryCode & 0x7FFFFFFF;
@@ -340,7 +341,7 @@ class OathToken
         $hotp = $dynamicBinaryCode % pow(10, $hotpSize);
 
         // Formats HOTP to the desired size
-        $format = '%0'.$hotpSize.'f';
+        $format = '%0'.$hotpSize.'d';
 
         return sprintf($format, $hotp);
     }
@@ -358,7 +359,6 @@ class OathToken
     public static function calculateHOTP($key, $value, $hotpSize)
     {
         $hmac = self::calculateHMAC($key, $value);
-
         return self::truncateHMAC($hmac, $hotpSize);
     }
 
@@ -375,14 +375,24 @@ class OathToken
         return $newSecret;
     }
 
+    /**
+     * Verify the HOTP
+     * @param unknown $hotp
+     * @return boolean
+     */
     public function verify ($hotp) {
         for ($i = 0; $i < $this->window; $i++) {
-            if ($hotp == self::calculateHOTP($this->secret, $this->counter, $this->hotpSize)) {
+            $counterValue = self::packCounter ($this->counter + $i);
+            if ($hotp == self::calculateHOTP($this->sharedSecret, $counterValue, $this->hotpSize)) {
+                $this->setCounter ($this->counter + $i + 1);
                 return TRUE;
             }
         }
-
         return FALSE;
+    }
+
+    public static function packCounter ($counter) {
+        return pack ('NNC*', $counter>>32, $counter & 0xFFFFFFFF);
     }
 
     /**
