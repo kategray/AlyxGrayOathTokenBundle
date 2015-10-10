@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace AlyxGray\OathTokenBundle\Model;
+namespace AlyxGray\OathTokenBundle;
 
 use Symfony\Component\Security\Core\Util\SecureRandom;
 
@@ -117,6 +117,12 @@ class OathToken
     const TOKEN_MODE_TIME = 2;
 
     /**
+     * How many OTPs should we process (in event mode) before we give up?
+     * @var integer
+     */
+    const WINDOW_DEFAULT = 30;
+
+    /**
      * Token counter
      *
      * @var integer
@@ -151,6 +157,12 @@ class OathToken
     protected $hotpSize = self::HOTP_DEFAULT_SIZE;
 
     /**
+     * Authentication Window
+     * @var unknown
+     */
+    protected $window = self::WINDOW_DEFAULT;
+
+    /**
      * Instantiate a new token
      *
      * @param string  $sharedSecret
@@ -162,7 +174,7 @@ class OathToken
      */
     public function __construct($sharedSecret = null, $mode = self::TOKEN_MODE_EVENT, $counter = 0)
     {
-        $this->setSecret($sharedSecret)->setMode($mode)->setCounter($counter);
+        $this->setSecret($sharedSecret)->setMode($mode);
     }
 
     /**
@@ -209,7 +221,7 @@ class OathToken
     {
         // Ensure that the shared secret meets complexity requirements
         $minLength = $ignoreRecommendedLength ? OathToken::SECRET_MINIMUM_BITS / 8 : OathToken::SECRET_RECOMMENDED_BITS / 8;
-        if ($sharedSecret && strlen($sharedSecret) < $minLength) {
+        if (strlen($sharedSecret) < $minLength) {
             throw new \InvalidArgumentException(sprintf('Secret provided contains %d bits, minimum permitted is %d.', strlen($sharedSecret) * 8, $minLength * 8), self::ERROR_INSUFFICIENT_SECRET_SIZE);
         }
 
@@ -362,4 +374,34 @@ class OathToken
 
         return $newSecret;
     }
+
+    public function verify ($hotp) {
+        for ($i = 0; $i < $this->window; $i++) {
+            if ($hotp == self::calculateHOTP($this->secret, $this->counter, $this->hotpSize)) {
+                return TRUE;
+            }
+        }
+
+        return FALSE;
+    }
+
+    /**
+     *
+     * @return the unknown_type
+     */
+    public function getWindow()
+    {
+        return $this->window;
+    }
+
+    /**
+     *
+     * @param unknown_type $window
+     */
+    public function setWindow($window)
+    {
+        $this->window = $window;
+        return $this;
+    }
+
 }
